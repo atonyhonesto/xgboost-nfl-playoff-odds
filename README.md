@@ -1,5 +1,7 @@
 # XGBoost NFL Playoff Odds
 
+**Live app: [xgboost-nfl-playoff-odds.streamlit.app](https://xgboost-nfl-playoff-odds.streamlit.app/)**
+
 Every NFL team's chances to make the playoffs, win its division, earn the #1 seed and
 win the Super Bowl. The app plays out the rest of the season **10,000 times** with an
 **XGBoost** game model and the NFL's real **tiebreakers**, and updates every week.
