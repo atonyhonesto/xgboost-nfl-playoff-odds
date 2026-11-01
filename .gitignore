@@ -1,0 +1,24 @@
+# Local Python environment and caches
+.venv/
+__pycache__/
+*.pyc
+
+# The app only needs data/games.csv, data/teams.csv, models/ and reports/.
+# data/team_games.csv and data/qb_games.csv are play-by-play summaries that let
+# game_data.py reload just the current season; they can be rebuilt with --all.
+data/team_games.csv
+data/qb_games.csv
+
+# Copied from the NASCAR project for reference only; not used here
+simulation.py
+docs/simulation.md
+
+# Personal working notes and Claude backup script (stay on the SSD)
+CLAUDE.md
+backup_claude.bat
+
+# Editor / OS clutter
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

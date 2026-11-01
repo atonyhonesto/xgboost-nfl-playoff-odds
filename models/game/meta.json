@@ -1,0 +1,19 @@
+{
+  "features": [
+    "elo_diff",
+    "net_epa_diff",
+    "pass_net_diff",
+    "succ_net_diff",
+    "margin_diff",
+    "qb_diff",
+    "home_qb_shift",
+    "away_qb_shift",
+    "rest_diff",
+    "div_game",
+    "neutral",
+    "week"
+  ],
+  "sigma": 12.731522776362825,
+  "trained_games": 6073,
+  "trained_through": "2026-10-29"
+}

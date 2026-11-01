@@ -1,0 +1,24 @@
+# App look: a night-game scoreboard. Navy and white with a scoreboard red, gold
+# highlights and a turf green (set in app.py's STYLE). Our own shades, not any
+# league's or team's official colours.
+# Light and dark both defined; viewers can switch in the app's Settings menu.
+
+[theme]
+headingFontWeights = [700, 600, 600, 600, 600, 600]
+baseRadius = "small"
+
+[theme.light]
+primaryColor = "#c62f37"
+linkColor = "#1a3a6b"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f1f4f9"
+textColor = "#0d1b33"
+borderColor = "#d6dde9"
+
+[theme.dark]
+primaryColor = "#e3b448"
+linkColor = "#e3b448"
+backgroundColor = "#0f1726"
+secondaryBackgroundColor = "#17223a"
+textColor = "#eef2f8"
+borderColor = "#26324d"
