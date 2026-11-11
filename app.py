@@ -156,24 +156,31 @@ st.set_page_config(page_title=TITLE, page_icon="🏈", layout="wide")
 
 
 # ---------------------------------------------------------------- data
+# Every loader takes `stamp`, the newest modified time of the files the weekly routine
+# writes. A push of new data changes it, so the caches reload without a reboot.
 
-@st.cache_data
-def get_games():
+def data_stamp():
+    files = (gm.TABLE, ss.TEAMS, gm.FOLDER / "meta.json", gm.REPORTS / "season_odds.csv")
+    return max(p.stat().st_mtime for p in files if p.exists())
+
+
+@st.cache_data(max_entries=1)
+def get_games(stamp):
     return pd.read_csv(gm.TABLE)
 
 
-@st.cache_data
-def get_teams():
+@st.cache_data(max_entries=1)
+def get_teams(stamp):
     return ss.load_teams()
 
 
-@st.cache_resource
-def get_model():
+@st.cache_resource(max_entries=1)
+def get_model(stamp):
     return gm.load()
 
 
-@st.cache_data
-def get_reports():
+@st.cache_data(max_entries=1)
+def get_reports(stamp):
     names = ("season_odds", "odds_history", "stakes", "game_next", "game_metrics", "game_metrics_by_season",
              "game_calibration", "season_metrics", "seeding_check")
     paths = {k: gm.REPORTS / f"{k}.csv" for k in names}
@@ -183,22 +190,22 @@ def get_reports():
     return {k: pd.read_csv(p) for k, p in paths.items()}
 
 
-@st.cache_data(show_spinner=False)
-def games_csv():
-    return get_games().to_csv(index=False)
+@st.cache_data(show_spinner=False, max_entries=1)
+def games_csv(stamp):
+    return get_games(stamp).to_csv(index=False)
 
 
-@st.cache_resource(show_spinner=False)
-def get_context(season):
+@st.cache_resource(show_spinner=False, max_entries=1)
+def get_context(season, stamp):
     """Everything the what-if simulation needs (schedule, results, the model's predictions)."""
-    model, meta = get_model()
-    return ss.prepare(get_games(), season, get_teams(), model), meta["sigma"]
+    model, meta = get_model(stamp)
+    return ss.prepare(get_games(stamp), season, get_teams(stamp), model), meta["sigma"]
 
 
 @st.cache_data(show_spinner=False, max_entries=64)
-def what_if(season, forced_items):
+def what_if(season, forced_items, stamp):
     """Odds with some games fixed. Same random numbers every time, so changes come from the games."""
-    ctx, sigma = get_context(season)
+    ctx, sigma = get_context(season, stamp)
     odds, _, _ = ss.simulate(ctx, sigma, n_sims=ss.WHAT_IF_SIMS, seed_=1, forced=dict(forced_items))
     return odds
 
@@ -413,9 +420,10 @@ def history_chart(hist, teams_in, col):
 # ---------------------------------------------------------------- load
 
 try:
-    games, teams = get_games(), get_teams()
-    model, meta = get_model()
-    rep = get_reports()
+    stamp = data_stamp()
+    games, teams = get_games(stamp), get_teams(stamp)
+    model, meta = get_model(stamp)
+    rep = get_reports(stamp)
 except FileNotFoundError as err:
     st.error(str(err))
     st.stop()
@@ -523,7 +531,7 @@ with tab_week:
 # ---------------------------------------------------------------- what if?
 
 with tab_whatif:
-    ctx, sigma = get_context(season)
+    ctx, sigma = get_context(season, stamp)
     sched = ctx["games"].assign(played=ctx["played"])
     st.subheader("What if…?")
     st.write("Pick a team, decide some of its remaining games, and see how the odds move. Everything you leave "
@@ -551,8 +559,8 @@ with tab_whatif:
                 decided.append(f"{'Beats' if choice == 'Win' else 'Loses to'} {opp} (week {int(g['week'])})")
 
     with st.spinner("Simulating..."):
-        base = what_if(season, ())
-        new = what_if(season, tuple(sorted(forced.items())))
+        base = what_if(season, (), stamp)
+        new = what_if(season, tuple(sorted(forced.items())), stamp)
     b, n = base.set_index("team"), new.set_index("team")
     st.html(chips(decided or ["Every game simulated"], hot=f"{team}: what if"))
     cols = st.columns(5)
@@ -763,7 +771,7 @@ with tab_data:
         st.dataframe(played.sort_values(["gameday", "game_id"], ascending=False).head(500), hide_index=True)
         st.caption("The latest 500 games played, newest first; the download has every game, including those "
                    "still to play. Source: nflverse, via nflreadpy.")
-        st.download_button("Download the full table (CSV)", games_csv(), "games.csv",
+        st.download_button("Download the full table (CSV)", games_csv(stamp), "games.csv",
                            mime="text/csv", icon=":material/download:")
 
 st.html(FOOTER.format(linkedin=LINKEDIN_URL, github=GITHUB_URL))

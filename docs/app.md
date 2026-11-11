@@ -6,6 +6,11 @@ the *What if?* tab simulates live.
 
 Run it with `run_app.bat`, or `.venv\Scripts\python.exe -m streamlit run app.py`.
 
+**Caching.** The app keeps the files it reads in memory, so pages load fast. Each
+cached loader is keyed on the time the data files were last changed (`data_stamp()`),
+so when the weekly update is pushed, the live app reloads the new files on its own,
+with no reboot. Any new loader that reads a data file needs the same `stamp` argument.
+
 ## The tabs
 
 | Tab | What's on it |
