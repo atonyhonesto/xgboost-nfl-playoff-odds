@@ -22,3 +22,6 @@ backup_claude.bat
 .idea/
 Thumbs.db
 .DS_Store
+
+# Exported Claude session transcripts (local only)
+session-text/
