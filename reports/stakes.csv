@@ -1,2 +1,2 @@
 game_id,week,gameday,home_team,away_team,home_p_playoffs_win,home_p_playoffs_loss,home_p_division_win,home_p_division_loss,home_p_bye_win,home_p_bye_loss,away_p_playoffs_win,away_p_playoffs_loss,away_p_division_win,away_p_division_loss,away_p_bye_win,away_p_bye_loss,swing
-2026_10_LAC_BAL,10,2026-11-16,BAL,LAC,0.127,0.0625,0.0075,0.004,0.0,0.0,0.002,0.0,0.0,0.0,0.0,0.0,0.0665
+2026_11_CIN_WAS,11,2026-11-23,WAS,CIN,0.221,0.0945,0.2035,0.0895,0.0,0.0,0.988,0.9695,0.8915,0.8175,0.162,0.0695,0.14500000000000002

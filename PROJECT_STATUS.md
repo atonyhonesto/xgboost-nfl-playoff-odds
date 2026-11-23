@@ -83,7 +83,7 @@ AppTest: `AppTest.from_file(r"D:\Python\NFL Playoff Odds\app.py", default_timeou
 - Six-tab app with football-broadcast look, light/dark, validated chart palette.
 - Docs for every code file; README with honest results.
 - GitHub repo (topics, website link) and Streamlit Cloud deploy; keep-awake action passing.
-- Weekly update through week 10 (2026-11-16), pushed and live.
+- Weekly update through week 11 (2026-11-23), pushed and live.
 - Data-only pushes now refresh the live app without a reboot (2026-11-11).
 
 ## 7. Remaining work
