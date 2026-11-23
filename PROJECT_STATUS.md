@@ -52,9 +52,10 @@ https://github.com/atonyhonesto/xgboost-nfl-playoff-odds (public, branch `main`)
 - Missing files raise `FileNotFoundError` with the script to run; the app shows it and stops.
 - Heavy imports (nflreadpy, polars) are lazy so the app starts fast.
 - Chart colours: fixed palette validated with `D:\Python\Motorsports Fuel Strategy\check_colours.py`.
-- Testing: no test suite in the repo. Checks are `streamlit.testing.v1.AppTest` runs,
-  Playwright/Edge screenshots (tall viewport, wait for `[data-testid="stMetric"]`),
-  `check_seeding()` (22 of 22 brackets) and the backtests.
+- Testing: `tests/` (pytest, about 10 s): data sanity, simulation rules, 22-of-22
+  brackets, AppTest smoke run and reload-after-push. Visual checks stay manual:
+  Playwright/Edge screenshots (tall viewport, wait for `[data-testid="stMetric"]`).
+- `requirements.txt` pins exact versions; `requirements-dev.txt` adds pytest.
 - Every code file has a `docs/<file>.md`, kept in step.
 - Commits use the no-reply email; ask Tony before every push.
 
@@ -68,6 +69,8 @@ run_app.bat                                        start the app locally
 .venv\Scripts\python.exe season_forecast.py        simulate + save reports (~30 s-2 min)
 .venv\Scripts\python.exe season_forecast.py --backtest   also re-run the season backtest (+3 min)
 .venv\Scripts\python.exe -m streamlit run app.py   same as run_app.bat
+.venv\Scripts\python.exe -m pip install -r requirements-dev.txt   once per PC, for tests
+.venv\Scripts\python.exe -m pytest tests -q        run the tests (before every push)
 git push                                           redeploys the live app (ask first)
 ```
 `git`/`gh` live in `C:\Program Files\Git\cmd` and `C:\Program Files\GitHub CLI` if PATH is stale.
@@ -97,8 +100,8 @@ AppTest: `AppTest.from_file(r"D:\Python\NFL Playoff Odds\app.py", default_timeou
    once the regular season ends and real playoff games are played hasn't been run.
 4. **Next-season rollover untested** (`game_data.py` `current_season`, `season_forecast.py`
    history): what happens when nflverse switches to 2027.
-5. **No tests in the repo**: AppTest and screenshot scripts were kept in the session
-   scratchpad only. Consider a small `tests/` folder (Playwright stays out of `requirements.txt`).
+5. ~~**No tests in the repo**~~ (`tests/`). Done 2026-11-23: 15 pytest tests; requirements
+   pinned to exact versions at the same time.
 6. **Keep-awake Node 20 warning** (`.github/workflows/keep-awake.yml`): `actions/setup-python@v5`
    is being forced onto Node 24; bump the version before GitHub removes Node 20.
 7. **Unused NASCAR copies** (`simulation.py`, `docs/simulation.md`): gitignored but still on
@@ -111,7 +114,7 @@ AppTest: `AppTest.from_file(r"D:\Python\NFL Playoff Odds\app.py", default_timeou
 - **Title text** "XGBoost NFL Playoff Odds" is checked by keep-awake; never change or
   uppercase it with CSS.
 - **Streamlit Cloud:** main file `app.py` can't be changed; Python 3.12 is fixed at deploy.
-  `requirements.txt` has lower bounds only, so a reboot can pull newer libraries.
+  `requirements.txt` pins exact versions; upgrade deliberately and re-run the tests.
 - **2026-11-03 outage:** Streamlit's static files failed intermittently for both of Tony's
   apps (not our code). If keep-awake fails, compare with the NASCAR app before debugging.
 - **SSD damage:** after `chkdsk` some files were emptied or filled with garbage; use

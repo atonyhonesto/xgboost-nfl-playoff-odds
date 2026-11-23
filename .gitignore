@@ -1,6 +1,7 @@
 # Local Python environment and caches
 .venv/
 __pycache__/
+.pytest_cache/
 *.pyc
 
 # The app only needs data/games.csv, data/teams.csv, models/ and reports/.

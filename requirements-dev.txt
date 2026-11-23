@@ -1,0 +1,3 @@
+# For running the tests locally; Streamlit Cloud only installs requirements.txt.
+-r requirements.txt
+pytest==9.2.0
