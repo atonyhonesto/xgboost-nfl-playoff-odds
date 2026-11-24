@@ -52,11 +52,11 @@ data, and a sibling of the [XGBoost NASCAR Predictor](https://xgboost-nascar-pre
 
 Everything is tested walk-forward: each forecast uses only what was known at the time.
 
-**Single games** (1,301 games, 2022 to week 11 of 2026):
+**Single games** (1,302 games, 2022 to week 11 of 2026):
 
 | | XGBoost | Betting line | Elo | Home field only |
 |---|---|---|---|---|
-| Picked the winner | 64.1% | **67.7%** | 64.1% | 53.4% |
+| Picked the winner | 64.1% | **67.6%** | 64.1% | 53.4% |
 | Win log loss (lower is better) | 0.624 | **0.607** | 0.633 | 0.689 |
 
 The model edges Elo and clearly beats home field, but **the betting market is better**.
