@@ -1,24 +1,27 @@
-# App look: a night-game scoreboard. Navy and white with a scoreboard red, gold
-# highlights and a turf green (set in app.py's STYLE). Our own shades, not any
-# league's or team's official colours.
+# App look: a stats terminal. Monospace type, square corners, hairline rules and one
+# amber accent (dark) / burnt amber (light). Page styling is in app.py's STYLE.
 # Light and dark both defined; viewers can switch in the app's Settings menu.
+# Chart colours are checked against both backgrounds with check_colours.py.
 
 [theme]
+font = "IBM Plex Mono:https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+codeFont = "IBM Plex Mono:https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
 headingFontWeights = [700, 600, 600, 600, 600, 600]
-baseRadius = "small"
+baseRadius = "none"
+baseFontSize = 14
 
 [theme.light]
-primaryColor = "#c62f37"
-linkColor = "#1a3a6b"
+primaryColor = "#9a5b00"
+linkColor = "#9a5b00"
 backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f1f4f9"
-textColor = "#0d1b33"
-borderColor = "#d6dde9"
+secondaryBackgroundColor = "#f3f3f0"
+textColor = "#14171a"
+borderColor = "#d2d2cc"
 
 [theme.dark]
-primaryColor = "#e3b448"
-linkColor = "#e3b448"
-backgroundColor = "#0f1726"
-secondaryBackgroundColor = "#17223a"
-textColor = "#eef2f8"
-borderColor = "#26324d"
+primaryColor = "#f2a900"
+linkColor = "#f2a900"
+backgroundColor = "#0b0d10"
+secondaryBackgroundColor = "#14181d"
+textColor = "#d9dee5"
+borderColor = "#2a3038"

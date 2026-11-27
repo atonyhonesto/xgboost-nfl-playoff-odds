@@ -30,108 +30,88 @@ LINKEDIN_URL = "https://www.linkedin.com/in/tony-honesto-4195023"
 GITHUB_URL = "https://github.com/atonyhonesto"
 TITLE = "XGBoost NFL Playoff Odds"
 
-# Page styling: a football-broadcast feel (navy scoreboard, yard lines, turf, condensed
-# block type) without any league or team marks. Theme colours for Streamlit's own widgets
-# live in .streamlit/config.toml. Fixed-colour blocks and translucent fills read in both
-# light and dark mode.
+# Page styling: a stats terminal. Monospace type (set in .streamlit/config.toml), square
+# corners, hairline rules, no gradients or banners, and one accent colour. Rules and
+# muted text are translucent greys so they read in both light and dark mode; {accent}
+# is filled in per theme when the page loads.
 STYLE = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap');
-:root { --navy: #0d1b33; --navy2: #1a3a6b; --ink: #081226; --red: #c62f37; --gold: #e3b448;
-        --turf: #2f6b3a; --sport: 'Oswald', 'Arial Narrow', sans-serif; }
+:root { --accent: {accent}; --rule: rgba(128,128,128,.32); --muted: rgba(128,128,128,.95); }
+[data-testid="stMainBlockContainer"] { padding-top: 3.6rem; }   /* clears Streamlit's toolbar */
 
-/* Banner: night-game scoreboard over a field */
-.hero { position: relative; overflow: hidden; border-radius: 6px; padding: 24px 28px 36px;
-        background: linear-gradient(110deg, var(--ink) 0%, var(--navy) 50%, var(--navy2) 100%); }
-.hero::before { content: ""; position: absolute; inset: 0;   /* yard lines */
-                background: repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 2px, transparent 2px 70px); }
-.hero::after { content: ""; position: absolute; top: 0; right: -40px; width: min(220px, 30%); height: 100%;
-               background: linear-gradient(90deg, var(--red) 0 70%, var(--gold) 70% 78%, transparent 78%);
-               transform: skewX(-18deg); opacity: .9; }
-.hero .name { position: relative; z-index: 1; font-family: var(--sport); font-weight: 700; letter-spacing: .5px;
-              line-height: 1.05; font-size: clamp(2rem, 5vw, 3.2rem); color: #fff; }
-.hero .name span { color: var(--gold); }
-.hero .tag { position: relative; z-index: 1; margin-top: 6px; color: #c9d4e8; font-size: 1rem; }
-.hero .by { position: relative; z-index: 1; margin-top: 10px; font-size: .95rem; color: #dfe6f3; }
-.hero .by a { color: var(--gold); font-weight: 600; text-decoration: none; }
-.hero .by a:hover { text-decoration: underline; }
-.hero .turf { position: absolute; left: 0; right: 0; bottom: 0; height: 12px; z-index: 1;   /* hash marks */
-              background: repeating-linear-gradient(90deg, rgba(255,255,255,.6) 0 2px, transparent 2px 18px) var(--turf); }
+/* Header: title line, then a status bar */
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 24px;
+       padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+.bar .title { font-weight: 700; font-size: clamp(1.3rem, 3.2vw, 1.75rem); letter-spacing: -.3px; }
+.bar .title::before { content: "> "; color: var(--accent); }
+.bar .by { font-size: .82rem; color: var(--muted); }
+.bar a, .foot a { color: var(--accent); text-decoration: none; }
+.bar a:hover, .foot a:hover { text-decoration: underline; }
+.status { display: flex; flex-wrap: wrap; font-size: .78rem; border-bottom: 1px solid var(--rule); margin-bottom: 6px; }
+.status span { padding: 5px 12px 5px 0; margin-right: 12px; border-right: 1px solid var(--rule); color: var(--muted);
+               white-space: nowrap; }
+.status span:last-child { border-right: none; }
+.status b { color: var(--accent); font-weight: 600; margin-left: 6px; }
 
-/* Section headings: condensed block type behind a red flag */
-[data-testid="stMain"] h3 { font-family: var(--sport); font-weight: 600; letter-spacing: .3px; }
-[data-testid="stMain"] h3::before { content: ""; display: inline-block; width: 6px; height: .8em; margin-right: 10px;
-    vertical-align: -.05em; background: var(--red); box-shadow: 3px 0 0 var(--gold); }
+/* Section headings: small caps label with a prompt marker */
+[data-testid="stMain"] h3 { font-size: .95rem !important; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+[data-testid="stMain"] h3::before { content: "\\25B8  "; color: var(--accent); }
 
 /* Tabs */
-[data-testid="stTab"] p { font-family: var(--sport); font-weight: 600; font-size: 1.1rem;
-    text-transform: uppercase; letter-spacing: .8px; }
-@media (max-width: 640px) { [data-testid="stTab"] p { font-size: .9rem; letter-spacing: .2px; } }
-
-/* Panels around charts and tables: a scoreboard stripe across the top */
-[class*="st-key-panel_"] { position: relative; overflow: hidden; }
-[class*="st-key-panel_"]::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-    background: linear-gradient(90deg, var(--navy2) 0 70%, var(--red) 70% 92%, var(--gold) 92%); }
+[data-testid="stTab"] p { font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
 /* Stat tiles */
-[data-testid="stMetric"] { border-left: 6px solid var(--red) !important; }
-[data-testid="stMetricValue"] { font-family: var(--sport); font-weight: 600; }
-[data-testid="stMetricLabel"] p { text-transform: uppercase; letter-spacing: .6px; font-size: .78rem; font-weight: 600; }
+[data-testid="stMetric"] { padding: 10px 14px !important; }
+[data-testid="stMetricLabel"] p { text-transform: uppercase; letter-spacing: 1px; font-size: .72rem;
+    color: var(--muted); }
+[data-testid="stMetricValue"] { font-weight: 600; font-size: 1.7rem; }
 
-/* Info chips */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; }
-.chip { font-size: .85rem; padding: 3px 11px; border-radius: 999px; white-space: nowrap;
-        background: rgba(26,58,107,.10); border: 1px solid rgba(26,58,107,.40); }
-.chip.hot { color: #fff; border: none; font-weight: 600; background: linear-gradient(90deg, var(--navy2), var(--red)); }
+/* Tags (what-if summary) */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; font-size: .8rem; }
+.chip { padding: 2px 8px; border: 1px solid var(--rule); white-space: nowrap; }
+.chip.hot { border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
-/* Score bugs: this week's games, styled like a broadcast score graphic */
-.bugs { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; margin: 6px 0 4px; }
-.bug { background: var(--navy); color: #fff; border-radius: 6px; overflow: hidden; border-bottom: 4px solid var(--red);
-       box-shadow: 0 0 0 1px rgba(137,135,129,.35); }   /* outline keeps the card visible on a dark page */
-.bug .when { font-size: .75rem; letter-spacing: .6px; text-transform: uppercase; color: #aebbd4;
-             padding: 6px 12px 4px; background: var(--ink); }
-.bug .row { display: flex; align-items: center; gap: 10px; padding: 6px 12px; }
-.bug .row + .row { border-top: 1px solid rgba(255,255,255,.08); }
-.bug .abbr { font-family: var(--sport); font-weight: 700; font-size: 1.35rem; width: 52px; }
-.bug .rec { font-size: .8rem; color: #aebbd4; flex: 1; }
-.bug .pct { font-family: var(--sport); font-weight: 600; font-size: 1.2rem; padding: 0 8px; border-radius: 3px; }
-.bug .fav .pct { background: var(--gold); color: var(--ink); }
-.bug .bfoot { font-size: .8rem; line-height: 1.45; color: #dfe6f3; padding: 6px 12px 8px;
-              background: rgba(255,255,255,.05); }
-.bug .bfoot b { color: var(--gold); font-weight: 600; }
+/* This week's games: compact boxes, numbers in columns */
+.bugs { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; margin: 6px 0 4px; }
+.bug { border: 1px solid var(--rule); font-size: .85rem; }
+.bug .when { font-size: .72rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+             padding: 5px 10px; border-bottom: 1px solid var(--rule); }
+.bug .row { display: flex; align-items: baseline; gap: 10px; padding: 4px 10px; }
+.bug .abbr { font-weight: 700; font-size: 1.05rem; width: 44px; }
+.bug .rec { color: var(--muted); flex: 1; }
+.bug .pct { font-weight: 600; font-size: 1.05rem; }
+.bug .fav .pct { color: var(--accent); }
+.bug .fav .abbr::after { content: " \\25C2"; color: var(--accent); font-size: .8rem; }
+.bug .bfoot { font-size: .76rem; line-height: 1.5; color: var(--muted); padding: 5px 10px 7px;
+              border-top: 1px dashed var(--rule); }
+.bug .bfoot b { color: inherit; font-weight: 600; }
 
 /* Footer */
-.foot { margin-top: 36px; padding-top: 16px; font-size: .85rem; position: relative;
-        display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; align-items: center; }
-.foot::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px; opacity: .55;
-                background: repeating-linear-gradient(90deg, #898781 0 2px, transparent 2px 14px); }
-.foot a { color: var(--red); font-weight: 600; text-decoration: none; }
-.foot .stack span { font-family: var(--sport); font-weight: 600; letter-spacing: .4px;
-                    padding: 2px 9px; margin-right: 6px; border-radius: 3px; border: 1px solid rgba(137,135,129,.45); }
-.foot .note { opacity: .65; flex-basis: 100%; }
+.foot { margin-top: 32px; padding-top: 10px; border-top: 1px solid var(--rule); font-size: .76rem;
+        display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; color: var(--muted); }
+.foot .note { flex-basis: 100%; }
 </style>
 """
 
-HERO = """
-<div class="hero">
-  <div class="name"><span>XGBoost</span> NFL Playoff Odds</div>
-  <div class="tag">The rest of the season, simulated 10,000 times</div>
-  <div class="by">Built by <b>Tony Honesto</b> &middot;
-    <a href="{linkedin}" target="_blank">LinkedIn</a> &middot;
+HEADER = """
+<div class="bar">
+  <div class="title">XGBoost NFL Playoff Odds</div>
+  <div class="by">Tony Honesto &middot; <a href="{linkedin}" target="_blank">LinkedIn</a> &middot;
     <a href="{github}" target="_blank">GitHub</a></div>
-  <div class="turf"></div>
 </div>
 """
 
 FOOTER = """
 <div class="foot">
-  <div>Built by <b>Tony Honesto</b> &middot; <a href="{linkedin}" target="_blank">LinkedIn</a> &middot;
+  <div>Tony Honesto &middot; <a href="{linkedin}" target="_blank">LinkedIn</a> &middot;
        <a href="{github}" target="_blank">GitHub</a></div>
-  <div class="stack"><span>XGBoost</span><span>Monte Carlo</span><span>SHAP</span><span>Plotly</span><span>Streamlit</span></div>
+  <div>XGBoost &middot; Monte Carlo &middot; SHAP &middot; Plotly &middot; Streamlit</div>
   <div class="note">An independent fan project built on nflverse's free public data. Not affiliated with or
        endorsed by the NFL, any team or any sponsor. Forecasts are for fun, not betting advice.</div>
 </div>
 """
+ACCENT = {"dark": "#f2a900", "light": "#9a5b00"}
 
 FEATURE_NAMES = {
     "elo_diff": "Elo rating edge",
@@ -212,11 +192,15 @@ def what_if(season, forced_items, stamp):
 
 # ---------------------------------------------------------------- helpers
 
+def dark_mode():
+    return getattr(getattr(st.context, "theme", None), "type", "light") == "dark"
+
+
 def style(fig, height=380, y_title=None, x_title=None):
     fig.update_layout(
         height=height, margin=dict(l=10, r=10, t=30, b=10), hovermode="closest",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-        font=dict(family='system-ui, -apple-system, "Segoe UI", sans-serif'),
+        font=dict(family='"IBM Plex Mono", ui-monospace, Consolas, monospace', size=12),
     )
     fig.update_xaxes(title=x_title, showgrid=False)
     fig.update_yaxes(title=y_title, gridcolor=GRID, zeroline=False)
@@ -224,8 +208,14 @@ def style(fig, height=380, y_title=None, x_title=None):
 
 
 def panel(key):
-    """A bordered card with a scoreboard stripe across the top (styled in STYLE)."""
+    """A bordered box around a chart or table."""
     return st.container(border=True, key=f"panel_{key}")
+
+
+def status(items):
+    """The status bar under the title: label/value pairs."""
+    return '<div class="status">' + "".join(
+        f"<span>{html.escape(k)} <b>{html.escape(str(v))}</b></span>" for k, v in items) + "</div>"
 
 
 def record(r):
@@ -285,7 +275,7 @@ def odds_table(odds, names, conf, group):
          else d.sort_values(["p_playoffs", "p_champion"], ascending=False))
     show = as_pct(d[["Team", "Division", "Record", "exp_wins"] + list(ODDS)], ODDS).rename(
         columns={"exp_wins": "Exp. wins"})
-    st.dataframe(show, hide_index=True, height=36 * len(show) + 40, column_config={
+    st.dataframe(show, hide_index=True, height="content", column_config={
         "Exp. wins": st.column_config.NumberColumn(format="%.1f", help="Average final wins across the simulations"),
         "p_playoffs": pct("Playoffs"), "p_division": pct("Division"), "p_bye": pct("#1 seed"),
         "p_super_bowl": pct("Super Bowl", max(30, show["p_super_bowl"].max())),
@@ -301,9 +291,9 @@ def seed_heatmap(odds, conf):
     text = [[f"{v:.0%}" if v >= 0.005 else "" for v in row] for row in z]
     x = [f"#{s}" for s in range(1, 8)] + ["Out"]
     # Plotly picks cell text colours as if the page were white, so dark mode gets an
-    # opaque navy-to-blue scale with white numbers instead of the translucent one.
-    dark = getattr(getattr(st.context, "theme", None), "type", "light") == "dark"
-    scale = ([[0, "#141f35"], [0.25, "#1f4a86"], [1, "#3987e5"]] if dark else
+    # opaque charcoal-to-blue scale with white numbers instead of the translucent one.
+    dark = dark_mode()
+    scale = ([[0, "#14181d"], [0.25, "#1f4a86"], [1, "#3987e5"]] if dark else
              [[0, "rgba(57,135,229,0.04)"], [0.25, "rgba(57,135,229,0.45)"], [1, "#184f95"]])
     fig = go.Figure(go.Heatmap(
         z=z, x=x, y=d["team"], text=text, texttemplate="%{text}", zmin=0, zmax=1, showscale=False, xgap=2, ygap=2,
@@ -440,10 +430,11 @@ reg = games[(games["season"] == season) & (games["game_type"] == "REG")]
 n_played = int(reg["result"].notna().sum())
 last_run = hist.loc[hist["week"] == now_week, "run_on"].max()
 
-st.html(STYLE)
-st.html(HERO.format(linkedin=LINKEDIN_URL, github=GITHUB_URL))
-st.html(chips([f"{season} season", f"Through week {now_week}", f"{n_played} of {len(reg)} games played",
-               f"Updated {last_run}"], hot="10,000 simulated seasons"))
+st.html(STYLE.replace("{accent}", ACCENT["dark" if dark_mode() else "light"]))
+st.html(HEADER.format(linkedin=LINKEDIN_URL, github=GITHUB_URL))
+st.html(status([("Season", season), ("Through", f"week {now_week}"),
+                ("Played", f"{n_played} of {len(reg)}"), ("Simulations", f"{ss.N_SIMS:,}"),
+                ("Updated", last_run)]))
 
 tabs = st.tabs(["Playoff odds", "This week", "What if?", "Odds over time", "How good is it?", "Data"])
 tab_odds, tab_week, tab_whatif, tab_time, tab_eval, tab_data = tabs
@@ -698,12 +689,12 @@ with tab_eval:
     wide["Odds of"] = wide["event"].map(EVENT_NAMES)
     wide["order"] = wide["event"].map({e: i for i, e in enumerate(EVENT_NAMES)})
     wide = wide.sort_values(["order", "week"])
-    wide["Model better?"] = np.where(wide[model_name] < wide["home field only"] - 0.002, "✅ yes",
-                                     np.where(wide[model_name] > wide["home field only"] + 0.002, "❌ no", "➖ level"))
+    wide["Model better?"] = np.where(wide[model_name] < wide["home field only"] - 0.002, "+ yes",
+                                     np.where(wide[model_name] > wide["home field only"] + 0.002, "- no", "= level"))
     with panel("season_eval"):
         st.dataframe(wide[["Odds of", "week", model_name, "home field only", "Model better?"]].rename(
             columns={"week": "From week", model_name: "Model", "home field only": "Coin-flip baseline"}),
-            hide_index=True, height=36 * len(wide) + 40, column_config={"Model": st.column_config.NumberColumn(format="%.3f"),
+            hide_index=True, height="content", column_config={"Model": st.column_config.NumberColumn(format="%.3f"),
                                             "Coin-flip baseline": st.column_config.NumberColumn(format="%.3f")})
         st.caption("Log loss, lower is better (within 0.002 counts as level). The model earns its keep on "
                    "division, #1 seed and Super Bowl odds. Once the standings take shape, plain playoff odds "
@@ -758,7 +749,7 @@ with tab_data:
             "Latest starting QB": qb.reindex(state.index).values, "QB EPA/dropback": state["qb_epa"],
         }).sort_values("Elo", ascending=False)
         num = lambda f: st.column_config.NumberColumn(format=f)
-        st.dataframe(ratings, hide_index=True, height=36 * len(ratings) + 40, column_config={
+        st.dataframe(ratings, hide_index=True, height="content", column_config={
             "Elo": num("%d"), "Offence EPA/play": num("%+.3f"), "Defence EPA/play allowed": num("%+.3f"),
             "Net EPA/play": num("%+.3f"), "Recent margin": num("%+.1f"), "QB EPA/dropback": num("%+.3f")})
         st.caption("Running averages that weight recent games most (see docs/game_data.md). For defence, lower "

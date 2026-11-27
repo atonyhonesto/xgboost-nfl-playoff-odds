@@ -83,7 +83,7 @@ AppTest: `AppTest.from_file(r"D:\Python\NFL Playoff Odds\app.py", default_timeou
 - Season + playoff Monte Carlo with strength shock (tau = 5, chosen by backtest).
 - NFL tiebreakers; rebuilds 22 of 22 real brackets (2004-25).
 - Weekly forecast with odds history, re-created missed weeks and per-game stakes.
-- Six-tab app with football-broadcast look, light/dark, validated chart palette.
+- Six-tab app with a stats-terminal look (2026-11-27), light/dark, validated chart palette.
 - Docs for every code file; README with honest results.
 - GitHub repo (topics, website link) and Streamlit Cloud deploy; keep-awake action passing.
 - Weekly update through week 11 (2026-11-23), pushed and live.

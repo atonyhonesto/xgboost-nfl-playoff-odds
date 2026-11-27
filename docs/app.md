@@ -36,13 +36,17 @@ with no reboot. Any new loader that reads a data file needs the same `stamp` arg
 
 ## Look and feel
 
-The look is a football broadcast, not a league brand:
+The look is a stats terminal (changed 2026-11-27 from an earlier broadcast-style
+banner), so the numbers lead:
 
-- **The banner:** a night-game scoreboard. A navy gradient with faint yard lines, a red
-  and gold slash, and a turf strip with hash marks along the bottom.
-- **Type:** headings, tabs and tile values in **Oswald**, a condensed block typeface
-  (from Google Fonts).
-- **Score bugs:** this week's games are drawn like the score graphic on a broadcast.
+- **Header:** the title on one line, then a status bar (season, week, games played,
+  simulations, last update). No banner or gradients.
+- **Type:** everything in **IBM Plex Mono** (Google Fonts, set in `config.toml`), so
+  numbers line up in columns.
+- **Structure:** square corners, hairline rules, small uppercase section labels, and one
+  accent colour: amber `#f2a900` in dark mode, burnt amber `#9a5b00` in light.
+- **This week's games:** compact boxes with both win chances, the model's margin next
+  to the betting line, and what each result does to playoff odds.
 - **What it avoids:** no NFL shield, team logos, official team colours or league fonts.
   Teams appear as plain abbreviations and names. The colours are our own shades, and
   the footer says it's an independent fan project.
